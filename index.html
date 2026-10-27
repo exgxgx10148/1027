@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>山海暖陽｜自然系婚紗攝影工作室</title>
+  <meta name="description" content="走進大自然的山海光影，專為新人與補拍夫妻打造溫暖動人的紀實婚紗攝影。" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Serif TC', 'Playfair Display', sans-serif;
+      background-color: #FAF9F5;
+      color: #2C2A29;
+    }
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Helper icon components using lucide or inline SVG
+    function SunIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      );
+    }
+
+    function CompassIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      );
+    }
+
+    function HeartIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      );
+    }
+
+    function MapPinIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      );
+    }
+
+    function CalendarIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+      );
+    }
+
+    function SparklesIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+      );
+    }
+
+    function ChevronRightIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m9 18 6-6-6-6"/></svg>
+      );
+    }
+
+    function CheckCircleIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+      );
+    }
+
+    function StarIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      );
+    }
+
+    function MenuIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      );
+    }
+
+    function XIcon(props) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      );
+    }
+
+    function App() {
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [activeTab, setActiveTab] = useState('all');
+      const [lightboxImage, setLightboxImage] = useState(null);
+      const [bookingForm, setBookingForm] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        package: 'mountain',
+        date: '',
+        note: ''
+      });
+      const [bookingSubmitted, setBookingSubmitted] = useState(false);
+      const [scrollProgress, setScrollProgress] = useState(0);
+
+      const galleryRef = useRef(null);
+      const [galleryScrollProgress, setGalleryScrollProgress] = useState(0);
+
+      useEffect(() => {
+        document.title = "山海暖陽｜自然系婚紗攝影工作室";
+        const handleScroll = () => {
+          const totalScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          const currentScroll = window.scrollY;
+          setScrollProgress((currentScroll / totalScroll) * 100);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      const portfolioItems = [
+        {
+          id: 1,
+          title: '合歡山夕陽與高山芒草',
+          category: 'mountain',
+          location: '合歡山主峰',
+          img: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
+          desc: '在海拔3000公尺的金色雲海中，許下相伴一生的高山誓言。'
+        },
+        {
+          id: 2,
+          title: '七星潭晨光海浪紀實',
+          category: 'sea',
+          location: '花蓮七星潭',
+          img: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80',
+          desc: '藍色太平洋與白色碎浪交織，赤腳踩在礫石灘上的純粹笑聲。'
+        },
+        {
+          id: 3,
+          title: '陽明山黑森林光影呢喃',
+          category: 'forest',
+          location: '台北陽明山黑森林',
+          img: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80',
+          desc: '樹梢灑落的溫暖斜陽，捕捉新人最自然親密眼神交流。'
+        },
+        {
+          id: 4,
+          title: '東北角崖線夕暮婚紗',
+          category: 'sea',
+          location: '新北水湳洞',
+          img: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1200&q=80',
+          desc: '壯闊海崖與晚霞橘紅，專屬於成熟愛情的沉靜浪漫。'
+        },
+        {
+          id: 5,
+          title: '杉林溪水杉林木靈氣',
+          category: 'forest',
+          location: '南投杉林溪',
+          img: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1200&q=80',
+          desc: '雲霧繚繞的童話森林，為補拍夫妻重溫初戀悸動。'
+        },
+        {
+          id: 6,
+          title: '日月潭湖畔晨霧倒影',
+          category: 'mountain',
+          location: '南投日月潭',
+          img: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80',
+          desc: '山水相映的清晨，靜謐中流淌著最溫柔的陪伴。'
+        },
+        {
+          id: 7,
+          title: '象鼻岩海岸夕照約會',
+          category: 'sea',
+          location: '新北深澳海岸',
+          img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+          desc: '浪花拍打奇岩，金橘色夕陽倒映在海面上，記錄最深刻的擁抱。'
+        },
+        {
+          id: 8,
+          title: '阿里山神木群薄霧晨曦',
+          category: 'mountain',
+          location: '嘉義阿里山',
+          img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+          desc: '穿透千年檜木群的晨光，神聖而寧靜，見證不變的誓約。'
+        }
+      ];
+
+      const filteredPortfolio = activeTab === 'all' 
+        ? portfolioItems 
+        : portfolioItems.filter(item => item.category === activeTab);
+
+      useEffect(() => {
+        if (galleryRef.current) {
+          galleryRef.current.scrollLeft = 0;
+          updateGalleryScrollState();
+        }
+      }, [activeTab]);
+
+      const updateGalleryScrollState = () => {
+        if (galleryRef.current) {
+          const { scrollLeft, scrollWidth, clientWidth } = galleryRef.current;
+          const maxScroll = scrollWidth - clientWidth;
+          const progress = maxScroll > 0 ? (scrollLeft / maxScroll) * 100 : 0;
+          setGalleryScrollProgress(progress);
+        }
+      };
+
+      useEffect(() => {
+        const galleryEl = galleryRef.current;
+        if (!galleryEl) return;
+
+        const handleWheel = (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            galleryEl.scrollBy({
+              left: e.deltaY * 2.5,
+              behavior: 'smooth'
+            });
+          }
+        };
+
+        galleryEl.addEventListener('wheel', handleWheel, { passive: false });
+        return () => {
+          if (galleryEl) galleryEl.removeEventListener('wheel', handleWheel);
+        };
+      }, []);
+
+      const packages = [
+        {
+          id: 'mountain',
+          title: '【山林光影】高山森呼吸專案',
+          subtitle: '適合熱愛大自然、森林與壯闊景致的新人',
+          price: '$45,800',
+          features: [
+            '精緻拍攝 8 小時（含造型時間）',
+            '專業攝影師單機雙人團隊 / 燈光師協助',
+            '新娘高級手工婚紗 1 套 + 輕婚紗/便服 1 套',
+            '新郎質感西服 1 套 + 自備便服 1 套',
+            '精緻整體造型跟妝（全日不分離）',
+            '精修照片 40 組，全數毛片高畫質贈送',
+            '精美USB木盒 + 12吋手工寫真本'
+          ],
+          popular: false
+        },
+        {
+          id: 'sea',
+          title: '【蔚藍海岸】海風誓約經典專案',
+          subtitle: '捕捉最動人的浪花、夕陽與海岸線浪漫',
+          price: '$52,800',
+          features: [
+            '精緻拍攝 10 小時（日出或夕陽大景）',
+            '資深主攝影師掌鏡 + 專業動態花絮短片',
+            '新娘設計師手工禮服 2 套（含輕婚紗）',
+            '新郎歐式修身西服 2 套',
+            '全日造型師隨行補妝與換造型',
+            '精修照片 50 組，全數毛片高畫質贈送',
+            '精緻USB木盒 + 12吋手工寫真本 + 框畫'
+          ],
+          popular: true
+        },
+        {
+          id: 'renewal',
+          title: '【時光溫暖】夫妻紀念與補拍專案',
+          subtitle: '給結婚多年、想重新穿上婚紗找回初心的你們',
+          price: '$36,800',
+          features: [
+            '輕鬆拍攝 6 小時（私房自然景點）',
+            '溫暖紀實攝影風格，捕捉真實日常互動',
+            '輕婚紗 1 套 + 自備紀念服飾 2 套',
+            '精緻自然妝髮造型 1 組',
+            '精修照片 30 組，全數毛片高畫質贈送',
+            '贈送溫馨拍立得紀錄與相框'
+          ],
+          popular: false
+        }
+      ];
+
+      const testimonials = [
+        {
+          name: '芷瑜 & 冠廷',
+          date: '結婚 5 週年補拍夫妻',
+          content: '我們結婚五年一直覺得當年的婚紗照太制式。在「山海暖陽」我們選擇了合歡山專案，攝影師引導我們像平常一樣互動，沒有尷尬的假笑，拿到的毛片就已經美得讓人落淚！這不只是拍照，是一場美好的約會。',
+          rating: 5,
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+        },
+        {
+          name: '柏翰 & 佳欣',
+          date: '2025 新人',
+          content: '造型老師真的神手！在大風的七星潭妝髮依然完美。攝影師超會抓光線，把我們拍得像電影劇照一樣。朋友看到照片都問這在哪拍的，質感真的沒話說，大推山海暖陽！',
+          rating: 5,
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'
+        },
+        {
+          name: '筱涵 & 家銘',
+          date: '2025 新人',
+          content: '本來我很擔心肢體障礙會笑得很僵，但團隊氣氛超級歡樂又溫暖，像朋友一起去郊遊一樣。成品出來全家人都讚不絕口，那種自然的溫度正是我們一直想要的。',
+          rating: 5,
+          avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80'
+        }
+      ];
+
+      const handleBookingSubmit = (e) => {
+        e.preventDefault();
+        if (!bookingForm.name || !bookingForm.phone) {
+          alert('請填寫您的姓名與聯絡電話');
+          return;
+        }
+        setBookingSubmitted(true);
+      };
+
+      return (
+        <div className="min-h-screen bg-[#FAF9F5] text-[#2C2A29]">
+          {/* Scroll Progress Bar */}
+          <div 
+            className="fixed top-0 left-0 h-1 bg-[#BC6C25] z-50 transition-all duration-150"
+            style={{ width: `${scrollProgress}%` }}
+          />
+
+          {/* Navigation */}
+          <header className="sticky top-0 z-40 bg-[#FAF9F5]/90 backdrop-blur-md border-b border-[#E3DEC3]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-10 h-10 rounded-full bg-[#BC6C25] flex items-center justify-center text-white shadow-md">
+                  <SunIcon className="w-5 h-5 animate-pulse" />
+                </div>
+                <div>
+                  <span className="text-xl font-serif font-bold tracking-widest text-[#2C2A29]">山海暖陽</span>
+                  <span className="block text-[10px] tracking-widest text-[#BC6C25] uppercase">Mountain & Sea Studio</span>
+                </div>
+              </div>
+
+              {/* Desktop Nav */}
+              <nav className="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide">
+                <a href="#about" className="hover:text-[#BC6C25] transition-colors">品牌理念</a>
+                <a href="#portfolio" className="hover:text-[#BC6C25] transition-colors">作品廊道</a>
+                <a href="#packages" className="hover:text-[#BC6C25] transition-colors">拍攝方案</a>
+                <a href="#stories" className="hover:text-[#BC6C25] transition-colors">新人真心話</a>
+                <a href="#faq" className="hover:text-[#BC6C25] transition-colors">常見問題</a>
+                <a 
+                  href="#booking" 
+                  className="px-5 py-2.5 rounded-full bg-[#BC6C25] text-white hover:bg-[#A35D1E] transition-all shadow-sm flex items-center space-x-2"
+                >
+                  <CalendarIcon className="w-4 h-4" />
+                  <span>預約諮詢</span>
+                </a>
+              </nav>
+
+              {/* Mobile menu button */}
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg text-[#2C2A29] hover:bg-[#E3DEC3]/40"
+              >
+                {mobileMenuOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+              </button>
+            </div>
+
+            {/* Mobile Dropdown */}
+            {mobileMenuOpen && (
+              <div className="md:hidden bg-[#FAF9F5] border-b border-[#E3DEC3] px-6 py-6 space-y-4 shadow-lg">
+                <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block text-base font-medium hover:text-[#BC6C25]">品牌理念</a>
+                <a href="#portfolio" onClick={() => setMobileMenuOpen(false)} className="block text-base font-medium hover:text-[#BC6C25]">作品廊道</a>
+                <a href="#packages" onClick={() => setMobileMenuOpen(false)} className="block text-base font-medium hover:text-[#BC6C25]">拍攝方案</a>
+                <a href="#stories" onClick={() => setMobileMenuOpen(false)} className="block text-base font-medium hover:text-[#BC6C25]">新人真心話</a>
+                <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="block text-base font-medium hover:text-[#BC6C25]">常見問題</a>
+                <a href="#booking" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 rounded-full bg-[#BC6C25] text-white text-center font-medium flex items-center justify-center space-x-2">
+                  <CalendarIcon className="w-4 h-4" />
+                  <span>立即預約諮詢</span>
+                </a>
+              </div>
+            )}
+          </header>
+
+          {/* Hero Section */}
+          <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 z-0">
+              <img 
+                src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80" 
+                alt="山海暖陽婚紗攝影" 
+                className="w-full h-full object-cover brightness-[0.7] scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2C2A29]/70 via-[#2C2A29]/20 to-transparent" />
+            </div>
+
+            <div className="relative z-10 max-w-5xl mx-auto px-4 text-center text-white py-24">
+              <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs tracking-widest uppercase mb-6 border border-white/20">
+                <SparklesIcon className="w-3.5 h-3.5 text-[#D4A373]" />
+                <span>自然光影 · 紀實美學 · 溫度婚紗</span>
+              </div>
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold tracking-wide leading-tight mb-6">
+                在山林與蔚藍之間<br />
+                留下我們最真實的愛
+              </h1>
+              <p className="text-base sm:text-xl font-light text-gray-200 max-w-2xl mx-auto mb-10 leading-relaxed">
+                專為嚮往自然景致的新人與希望重溫初心的補拍夫妻，捕捉風中的笑聲、夕陽的溫柔，以及彼此眼中永恆的光芒。
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#booking" className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#BC6C25] hover:bg-[#A35D1E] text-white font-medium text-base transition-all shadow-lg flex items-center justify-center space-x-2">
+                  <span>預約專屬諮詢</span>
+                  <ChevronRightIcon className="w-4 h-4" />
+                </a>
+                <a href="#portfolio" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/25 hover:bg-white/35 backdrop-blur-md text-white font-medium text-base transition-all border border-white/30 flex items-center justify-center space-x-2">
+                  <span>瀏覽橫向作品廊道</span>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* Brand Philosophy */}
+          <section id="about" className="py-24 bg-[#FAF9F5]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="text-xs uppercase tracking-widest text-[#BC6C25] font-semibold block mb-3">Our Philosophy</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2C2A29] mb-6">不只是擺拍，而是你們愛情的真實紀錄</h2>
+                <div className="w-16 h-0.5 bg-[#BC6C25] mx-auto mb-6" />
+                <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
+                  我們相信，最動人的婚紗照不是僵硬的微笑與華麗佈景，而是風吹亂髮時他為你撥開的溫柔、牽手走過山徑的安心，以及兩人相視而笑時眼裡的純粹。
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#E3DEC3]/60">
+                  <div className="w-12 h-12 rounded-xl bg-[#F4F1EA] text-[#BC6C25] flex items-center justify-center mb-6">
+                    <CompassIcon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-serif font-bold mb-3 text-[#2C2A29]">山海壯闊私房景點</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">熟悉全台山林古道與海岸秘境，帶領新人遠離制式攝影棚，在天地大美間呼吸最自然的清新空氣。</p>
+                </div>
+
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#E3DEC3]/60">
+                  <div className="w-12 h-12 rounded-xl bg-[#F4F1EA] text-[#BC6C25] flex items-center justify-center mb-6">
+                    <SunIcon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-serif font-bold mb-3 text-[#2C2A29]">自然光影溫暖紀實</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">擅長運用清晨薄霧與黃昏夕暮的自然暖光，捕捉充滿空氣感、耐看且充滿故事張力的畫面。</p>
+                </div>
+
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#E3DEC3]/60">
+                  <div className="w-12 h-12 rounded-xl bg-[#F4F1EA] text-[#BC6C25] flex items-center justify-center mb-6">
+                    <HeartIcon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-serif font-bold mb-3 text-[#2C2A29]">專屬補拍與週年紀念</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">特別為結婚多年想找回初心的夫妻打造溫暖補拍方案，沒有壓力，只有重溫當年的浪漫與深情。</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Horizontal Portfolio Gallery Section */}
+          <section id="portfolio" className="py-24 bg-[#F4F1EA] overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                  <span className="text-xs uppercase tracking-widest text-[#BC6C25] font-semibold block mb-3">Horizontal Scroll Gallery</span>
+                  <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2C2A29]">光影紀實・滾輪橫向作品廊道</h2>
+                  <div className="w-16 h-0.5 bg-[#BC6C25] mt-3" />
+                </div>
+
+                {/* Filter Tabs */}
+                <div className="flex items-center space-x-2">
+                  <div className="inline-flex flex-wrap gap-2 bg-[#FAF9F5] p-1.5 rounded-full border border-[#E3DEC3]">
+                    <button 
+                      onClick={() => setActiveTab('all')}
+                      className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${activeTab === 'all' ? 'bg-[#BC6C25] text-white shadow-sm' : 'text-gray-600 hover:text-[#2C2A29]'}`}
+                    >
+                      全部作品
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('mountain')}
+                      className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${activeTab === 'mountain' ? 'bg-[#BC6C25] text-white shadow-sm' : 'text-gray-600 hover:text-[#2C2A29]'}`}
+                    >
+                      高山雲海
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('sea')}
+                      className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${activeTab === 'sea' ? 'bg-[#BC6C25] text-white shadow-sm' : 'text-gray-600 hover:text-[#2C2A29]'}`}
+                    >
+                      蔚藍海岸
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('forest')}
+                      className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${activeTab === 'forest' ? 'bg-[#BC6C25] text-white shadow-sm' : 'text-gray-600 hover:text-[#2C2A29]'}`}
+                    >
+                      綠意森林
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div 
+                ref={galleryRef}
+                onScroll={updateGalleryScrollState}
+                className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar pb-8 pt-2 px-4 sm:px-8 lg:px-12 gap-8 cursor-grab active:cursor-grabbing"
+              >
+                {filteredPortfolio.map((item, index) => (
+                  <div 
+                    key={item.id}
+                    onClick={() => setLightboxImage(item)}
+                    className="flex-shrink-0 w-[85vw] sm:w-[420px] md:w-[480px] snap-start group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer border border-[#E3DEC3]/80 flex flex-col"
+                  >
+                    <div className="relative h-[340px] sm:h-[380px] overflow-hidden bg-gray-100">
+                      <img 
+                        src={item.img} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+                      />
+                      <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs text-white flex items-center space-x-1.5 font-medium border border-white/20">
+                        <span className="w-2 h-2 rounded-full bg-[#D4A373] animate-pulse"></span>
+                        <span>No. {index + 1} / {filteredPortfolio.length}</span>
+                      </div>
+                    </div>
+                    <div className="p-8 flex-1 flex flex-col justify-between bg-white">
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs uppercase tracking-wider text-[#BC6C25] font-semibold bg-[#F4F1EA] px-3 py-1 rounded-full">
+                            {item.category === 'mountain' ? '高山雲海系列' : item.category === 'sea' ? '蔚藍海岸系列' : '綠意森林系列'}
+                          </span>
+                          <span className="text-xs text-gray-500 flex items-center space-x-1">
+                            <MapPinIcon className="w-3.5 h-3.5 text-[#BC6C25]" />
+                            <span>{item.location}</span>
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-serif font-bold text-[#2C2A29] mb-3 group-hover:text-[#BC6C25] transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                          {item.desc}
+                        </p>
+                      </div>
+                      <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-[#BC6C25]">
+                        <span>點擊檢視大圖</span>
+                        <span className="text-gray-400 font-light">山海暖陽作品集</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Gallery Progress & Wheel Scroll Indicator */}
+              <div className="max-w-md mx-auto px-6 mt-6 flex flex-col items-center space-y-3">
+                <div className="w-full flex items-center justify-between text-xs text-gray-500 font-medium">
+                  <span className="text-[#BC6C25]">💡 請使用滑鼠滾輪或觸控板左右滑動瀏覽</span>
+                  <span className="font-bold text-[#2C2A29]">{Math.round(galleryScrollProgress)}%</span>
+                </div>
+                <div className="w-full h-2 bg-[#E3DEC3] rounded-full overflow-hidden p-0.5">
+                  <div 
+                    className="h-full bg-[#BC6C25] transition-all duration-150 rounded-full"
+                    style={{ width: `${Math.max(8, galleryScrollProgress)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Packages Section */}
+          <section id="packages" className="py-24 bg-[#FAF9F5]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="text-xs uppercase tracking-widest text-[#BC6C25] font-semibold block mb-3">Investment</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2C2A29] mb-6">透明公開・拍攝方案</h2>
+                <div className="w-16 h-0.5 bg-[#BC6C25] mx-auto mb-6" />
+                <p className="text-gray-600 text-base sm:text-lg">
+                  所有方案皆包含專業攝影師、造型師跟妝與全數毛片檔案回饋，無隱藏消費，讓您安心享受最美的旅拍時光。
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                {packages.map((pkg) => (
+                  <div 
+                    key={pkg.id}
+                    className={`relative bg-white rounded-3xl p-8 flex flex-col justify-between border transition-all duration-300 ${
+                      pkg.popular 
+                        ? 'border-[#BC6C25] shadow-xl ring-2 ring-[#BC6C25]/20 scale-105 lg:-translate-y-2' 
+                        : 'border-[#E3DEC3]/80 shadow-sm'
+                    }`}
+                  >
+                    {pkg.popular && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#BC6C25] text-white text-xs font-medium px-4 py-1.5 rounded-full uppercase tracking-widest shadow-md">
+                        新人首選推薦
+                      </div>
+                    )}
+
+                    <div>
+                      <h3 className="text-2xl font-serif font-bold text-[#2C2A29] mb-2">{pkg.title}</h3>
+                      <p className="text-gray-500 text-xs mb-6 min-h-[32px]">{pkg.subtitle}</p>
+                      
+                      <div className="mb-8 pb-6 border-b border-gray-100">
+                        <span className="text-4xl font-serif font-bold text-[#BC6C25]">{pkg.price}</span>
+                        <span className="text-gray-500 text-xs ml-2">含造型、攝影與精修</span>
+                      </div>
+
+                      <ul className="space-y-4 mb-8">
+                        {pkg.features.map((feat, idx) => (
+                          <li key={idx} className="flex items-start text-sm text-gray-700">
+                            <CheckCircleIcon className="w-4 h-4 text-[#BC6C25] mr-3 shrink-0 mt-0.5" />
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <a 
+                      href="#booking"
+                      onClick={() => setBookingForm(prev => ({ ...prev, package: pkg.id }))}
+                      className={`w-full py-3.5 rounded-full font-medium text-center transition-all flex items-center justify-center space-x-2 ${
+                        pkg.popular
+                          ? 'bg-[#BC6C25] hover:bg-[#A35D1E] text-white shadow-md'
+                          : 'bg-[#F4F1EA] hover:bg-[#E3DEC3] text-[#2C2A29]'
+                      }`}
+                    >
+                      <span>選擇此方案預約</span>
+                      <ChevronRightIcon className="w-4 h-4" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Testimonials */}
+          <section id="stories" className="py-24 bg-[#F4F1EA]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="text-xs uppercase tracking-widest text-[#BC6C25] font-semibold block mb-3">Testimonials</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2C2A29] mb-6">新人與補拍夫妻的真心話</h2>
+                <div className="w-16 h-0.5 bg-[#BC6C25] mx-auto mb-6" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {testimonials.map((t, idx) => (
+                  <div key={idx} className="bg-white p-8 rounded-2xl shadow-sm border border-[#E3DEC3]/60 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center space-x-1 text-[#BC6C25] mb-4">
+                        {[...Array(t.rating)].map((_, i) => (
+                          <StarIcon key={i} className="w-4 h-4" />
+                        ))}
+                      </div>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-6 italic">"{t.content}"</p>
+                    </div>
+
+                    <div className="flex items-center space-x-4 pt-4 border-t border-gray-100">
+                      <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover border border-[#BC6C25]/30" />
+                      <div>
+                        <h4 className="font-serif font-bold text-[#2C2A29] text-base">{t.name}</h4>
+                        <span className="text-xs text-gray-500">{t.date}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FAQ Section */}
+          <section id="faq" className="py-24 bg-[#FAF9F5]">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <span className="text-xs uppercase tracking-widest text-[#BC6C25] font-semibold block mb-3">FAQ</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2C2A29] mb-6">常見問題</h2>
+                <div className="w-16 h-0.5 bg-[#BC6C25] mx-auto" />
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-2xl border border-[#E3DEC3]/60 shadow-sm">
+                  <h3 className="font-serif font-bold text-lg text-[#2C2A29] mb-2">Q1：我們肢體障礙、拍照容易緊張也可以拍出自然感嗎？</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">絕對可以！山海暖陽的攝影風格走紀實與互動路線，我們不會要求你們擺出死板的婚紗姿勢，而是透過聊天、散步與引導，捕捉你們最真實可愛的互動瞬間。</p>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl border border-[#E3DEC3]/60 shadow-sm">
+                  <h3 className="font-serif font-bold text-lg text-[#2C2A29] mb-2">Q2：結婚好幾年了，還適合拍「補拍 / 紀念婚紗」嗎？</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">非常適合！許多結婚 5 年、10 年甚至 20 年的夫妻會選擇我們來重溫當年的浪漫。這不僅是穿上婚紗，更是一場屬於兩人的深度心靈約會。</p>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl border border-[#E3DEC3]/60 shadow-sm">
+                  <h3 className="font-serif font-bold text-lg text-[#2C2A29] mb-2">Q3：如果拍攝當天下雨或天氣不佳怎麼辦？</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">我們會密切關注氣象。若遇不可抗力之豪雨或強風，團隊會免費協助您延期一次。另外山林與海霧其實常能拍出非常有張力、獨一無二的電影感畫面！</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Booking Form Section */}
+          <section id="booking" className="py-24 bg-[#F4F1EA] relative">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-[#E3DEC3]">
+                <div className="text-center mb-10">
+                  <span className="text-xs uppercase tracking-widest text-[#BC6C25] font-semibold block mb-3">Reservation</span>
+                  <h2 className="text-3xl font-serif font-bold text-[#2C2A29] mb-3">立即預約諮詢</h2>
+                  <p className="text-gray-600 text-sm">留下您的資訊，我們將有專人與您聯繫討論檔期與拍攝風格。</p>
+                </div>
+
+                {bookingSubmitted ? (
+                  <div className="text-center py-12 space-y-4">
+                    <div className="w-16 h-16 bg-[#BC6C25]/10 text-[#BC6C25] rounded-full flex items-center justify-center mx-auto">
+                      <CheckCircleIcon className="w-8 h-8" />
+                    </div>
+                    <h3 className="text-2xl font-serif font-bold text-[#2C2A29]">預約諮詢已送出！</h3>
+                    <p className="text-gray-600 text-sm max-w-md mx-auto">感謝您的填寫，山海暖陽團隊已收到您的需求，將會在 24 小時內與您聯繫！</p>
+                    <button onClick={() => setBookingSubmitted(false)} className="mt-6 px-6 py-2.5 rounded-full bg-[#BC6C25] text-white text-sm font-medium">再次填寫諮詢</button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleBookingSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">您的姓名 / 稱呼 *</label>
+                        <input 
+                          type="text" required placeholder="例如：林先生 / 陳小姐"
+                          value={bookingForm.name} onChange={e => setBookingForm({...bookingForm, name: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#BC6C25] outline-none text-sm bg-[#FAF9F5]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">聯絡電話 *</label>
+                        <input 
+                          type="tel" required placeholder="例如：0912-345-678"
+                          value={bookingForm.phone} onChange={e => setBookingForm({...bookingForm, phone: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#BC6C25] outline-none text-sm bg-[#FAF9F5]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">電子信箱</label>
+                        <input 
+                          type="email" placeholder="your@email.com"
+                          value={bookingForm.email} onChange={e => setBookingForm({...bookingForm, email: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#BC6C25] outline-none text-sm bg-[#FAF9F5]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">感興趣的方案</label>
+                        <select 
+                          value={bookingForm.package} onChange={e => setBookingForm({...bookingForm, package: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#BC6C25] outline-none text-sm bg-[#FAF9F5]"
+                        >
+                          <option value="mountain">【山林光影】高山森呼吸專案 ($45,800)</option>
+                          <option value="sea">【蔚藍海岸】海風誓約經典專案 ($52,800)</option>
+                          <option value="renewal">【時光溫暖】夫妻紀念與補拍專案 ($36,800)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">預計拍攝月份 / 想去的地點 / 想對我們說的話</label>
+                      <textarea 
+                        rows="4" placeholder="例如：預計今年10月拍攝，很喜歡合歡山的高山芒草..."
+                        value={bookingForm.note} onChange={e => setBookingForm({...bookingForm, note: e.target.value})}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#BC6C25] outline-none text-sm bg-[#FAF9F5]"
+                      ></textarea>
+                    </div>
+
+                    <button type="submit" className="w-full py-4 rounded-full bg-[#BC6C25] hover:bg-[#A35D1E] text-white font-medium text-base shadow-md transition-all flex items-center justify-center space-x-2">
+                      <span>送出預約諮詢</span>
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="bg-[#2C2A29] text-gray-300 py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div className="md:col-span-2 space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-[#BC6C25] flex items-center justify-center text-white">
+                      <SunIcon className="w-4 h-4" />
+                    </div>
+                    <span className="text-xl font-serif font-bold tracking-widest text-white">山海暖陽</span>
+                  </div>
+                  <p className="text-gray-400 text-sm max-w-sm leading-relaxed">走進大自然的山海光影，專為新人與補拍夫妻打造溫暖動人的紀實婚紗攝影工作室。</p>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-white font-serif font-bold text-sm tracking-wider">快速導覽</h4>
+                  <ul className="space-y-2 text-sm">
+                    <li><a href="#about" className="hover:text-[#BC6C25] transition-colors">品牌理念</a></li>
+                    <li><a href="#portfolio" className="hover:text-[#BC6C25] transition-colors">作品廊道</a></li>
+                    <li><a href="#packages" className="hover:text-[#BC6C25] transition-colors">拍攝方案</a></li>
+                    <li><a href="#stories" className="hover:text-[#BC6C25] transition-colors">新人真心話</a></li>
+                  </ul>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-white font-serif font-bold text-sm tracking-wider">聯絡我們</h4>
+                  <ul className="space-y-2 text-sm text-gray-400">
+                    <li>台灣全台外拍服務 / 工作室預約制</li>
+                    <li>0912-345-678</li>
+                    <li>hello@mountainseasun.com</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
+                <p>&copy; 2026 山海暖陽 自然系婚紗攝影工作室. All rights reserved.</p>
+              </div>
+            </div>
+          </footer>
+
+          {/* Lightbox Modal */}
+          {lightboxImage && (
+            <div onClick={() => setLightboxImage(null)} className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-md">
+              <div className="relative max-w-4xl w-full bg-[#2C2A29] rounded-2xl overflow-hidden shadow-2xl border border-white/10" onClick={e => e.stopPropagation()}>
+                <button onClick={() => setLightboxImage(null)} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black text-white transition-all">
+                  <XIcon className="w-6 h-6" />
+                </button>
+                <div className="max-h-[75vh] overflow-hidden bg-black flex items-center justify-center">
+                  <img src={lightboxImage.img} alt={lightboxImage.title} className="max-h-[75vh] w-auto object-contain" />
+                </div>
+                <div className="p-6 bg-[#2C2A29] text-white">
+                  <span className="text-xs uppercase tracking-widest text-[#D4A373] font-medium">{lightboxImage.location}</span>
+                  <h3 className="text-2xl font-serif font-bold mt-1 mb-2">{lightboxImage.title}</h3>
+                  <p className="text-gray-300 text-sm">{lightboxImage.desc}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
